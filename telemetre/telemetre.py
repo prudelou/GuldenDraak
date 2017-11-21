@@ -7,7 +7,8 @@ import sys
 GPIO.setmode(GPIO.BCM)
 
 # Define GPIO to use on Pi
-if sys.argv[0] == "forward":
+
+if sys.argv[1] == "forward":
 	GPIO_TRIGGER = 26
 	GPIO_ECHO = 19
 else:
