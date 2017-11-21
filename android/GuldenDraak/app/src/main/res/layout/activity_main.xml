@@ -5,7 +5,13 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-        <VideoView
+    <TextView
+        android:id="@+id/textViewSocket"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Socket : none" />
+
+    <VideoView
             android:id="@+id/videoView"
             android:layout_width="379dp"
             android:layout_height="310dp"
