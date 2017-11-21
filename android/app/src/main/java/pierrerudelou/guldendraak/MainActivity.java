@@ -2,16 +2,6 @@ package pierrerudelou.guldendraak;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Button;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,6 +16,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         this.msnMng = new MsgMng();
         this.initButtonListeners();
+    }
+
+    @Override
+    protected void onStop() {
+        msnMng.closeSocket();
+        super.onStop();
     }
 
     /** Initialize buttons listeners*/

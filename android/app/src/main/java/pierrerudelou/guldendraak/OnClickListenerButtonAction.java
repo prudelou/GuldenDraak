@@ -1,6 +1,5 @@
 package pierrerudelou.guldendraak;
 
-import android.content.DialogInterface;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -22,14 +21,16 @@ public class OnClickListenerButtonAction implements View.OnTouchListener {
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         switch(event.getAction()) {
+
             case MotionEvent.ACTION_DOWN:
-                // PRESSED
+                // Pressed
                 msgMng.sendMessage(buttonAction);
-                return true; // if you want to handle the touch event
+                return true;
+
             case MotionEvent.ACTION_UP:
+                // Released
                 msgMng.sendMessage(MainActivity.ButtonAction.stop);
-                // RELEASED
-                return true; // if you want to handle the touch event
+                return true;
         }
         return false;
     }
