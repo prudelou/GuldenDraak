@@ -1,9 +1,6 @@
 package pierrerudelou.guldendraak;
 
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.TextView;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,7 +25,6 @@ public class MsgMng {
     MsgMng(){
         // Open socket with SERVERPORT and SERVER_IP
         socketStatus = SocketStatus.unknown;
-        openSocket();
         startCheckConnection();
     }
 
@@ -38,29 +34,25 @@ public class MsgMng {
             @Override
             public void run() {
                 try {
-                    if (socket!=null && socket.isConnected()){
-                        out = new PrintWriter(socket.getOutputStream());
+                    if (socket.isConnected() && !socket.isClosed()) {
                         out.println(action.toString());
                         out.flush();
 
-                        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                         String message_distant = in.readLine();
-
-                        if (message_distant!=null){
-                            Log.d("RESPONSE " + action.toString(), ""+message_distant);
-                        }
-                        else{
-                            Log.e("RESPONSE" + action.toString(), "Error : no message sent by Server after "+action.toString()+" action.");
-                        }
-                    }
-                    else{
+                        Log.e("RESPONSE " + action.toString(), "" + message_distant);
+                    } else {
                         Log.e("SEND" + action.toString(), "Socket not connected.");
                     }
-
-
+                } catch (java.net.SocketTimeoutException e) {
+                    Log.e("TIMEOUT", "Socket time out.");
+                    openSocket();
+                } catch(java.net.SocketException e){
+                    Log.e("CLOSE", "Socket close.");
+                    openSocket();
                 } catch (IOException e) {
-                    closeSocket();
-                    Log.e("SEND" + action.toString(), "Error during send.");                }
+                    e.printStackTrace();
+                    Log.e("SEND" + action.toString(), "Error during send.");
+                }
             }
         };
         sendThread.setDaemon(true);
@@ -73,15 +65,18 @@ public class MsgMng {
             @Override
             public void run(){
 
-                while (true){
+                openSocket();
 
-                    if (socket != null && socket.isConnected()){
+                while (true){
+                    if (socket.isConnected() && !socket.isClosed()){
                         socketStatus = SocketStatus.connected;
                     }
                     else{
                         socketStatus = SocketStatus.disconnected;
+                        Log.e("SOCKET_STATUS", "Socket "+socketStatus.toString()+".");
+                        openSocket();
                     }
-                    Log.e("SOCKET_STATUS", "Socket "+socketStatus.toString()+".");
+
                     // Sleep 1000ms
                     try {
                         Thread.sleep(1000);
@@ -98,12 +93,14 @@ public class MsgMng {
     /** Open socket with SEVER_IP and SERVERPORT */
     public void openSocket(){
         try {
-            if (socket != null || !SERVER_IP.isEmpty() ||  socket.isClosed()){
-                this.socket = new Socket(InetAddress.getByName(SERVER_IP), SERVERPORT);
-                Log.d("SOCKET_OPEN", "Socket opened.");
-            }
+            this.socket = new Socket(InetAddress.getByName(SERVER_IP), SERVERPORT);
+            this.socket.setSoTimeout(5000);
+            out = new PrintWriter(socket.getOutputStream());
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+            Log.e("SOCKET_OPEN", "Socket opened.");
         } catch (IOException | android.os.NetworkOnMainThreadException e) {
-            Log.e("SOCKET_OPEN", "Error during open socket.");
+            Log.e("ERROR", e.getMessage());
         }
     }
 
@@ -112,7 +109,9 @@ public class MsgMng {
         try {
             if (socket!=null && !socket.isClosed()){
                 this.socket.close();
-                Log.d("SOCKET_CLOSED", "Socket closed.");
+                out.close();
+                in.close();
+                Log.e("SOCKET_CLOSED", "Socket closed.");
             }
         } catch (IOException e) {
             e.printStackTrace();
