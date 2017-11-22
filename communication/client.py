@@ -9,5 +9,7 @@ print("Connexion établie avec le serveur sur le port {}".format(port))
 
 while 1:
 	connexion_avec_serveur.send(input())
+	msg_recu = connexion_avec_serveur.recv(1024)
+	print msg_recu
 print("Fermeture de la connexion")
 connexion_avec_serveur.close()
