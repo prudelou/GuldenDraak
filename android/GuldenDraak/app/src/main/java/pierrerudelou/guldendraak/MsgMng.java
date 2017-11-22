@@ -68,7 +68,7 @@ public class MsgMng {
                 openSocket();
 
                 while (true){
-                    if (socket.isConnected() && !socket.isClosed()){
+                    if (socket != null && socket.isConnected() && !socket.isClosed()){
                         socketStatus = SocketStatus.connected;
                     }
                     else{
