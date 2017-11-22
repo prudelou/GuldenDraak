@@ -1,53 +1,32 @@
-import time
+
 import RPi.GPIO as GPIO
 import sys
+import time
+sys.path.insert(0, '../Moteur')
 
-# Use BCM GPIO references
+from RobotController import RobotController
+# Use BOARD GPIO references
 # instead of physical pin numbers
-GPIO.setmode(GPIO.BCM)
+GPIO.setmode(GPIO.BOARD)
 
 # Define GPIO to use on Pi
-if sys.argv[0] == "forward":
-	GPIO_TRIGGER = 26
-	GPIO_ECHO = 19
-else:
-	GPIO_TRIGGER = 6
-	GPIO_ECHO = 13
 
-print "Ultrasonic Measurement"
 
-# Set pins as output and input
-GPIO.setup(GPIO_TRIGGER,GPIO.OUT)  # Trigger
-GPIO.setup(GPIO_ECHO,GPIO.IN)      # Echo
+moteurAvDroit = [22, 26, 24]
+moteurAvGauche = [11, 13, 15]
+moteurArDroit = [36, 38, 40]
+moteurArGauche = [19, 23, 21]
+tAv = [37,35,10]
+tAr = [31,33,10]
 
-# Set trigger to False (Low)
-GPIO.output(GPIO_TRIGGER, False)
+GPIO.setmode(GPIO.BOARD)
+robotController = RobotController(moteurAvDroit, moteurAvGauche, moteurArDroit, moteurArGauche, tAv, tAr)
 
-# Allow module to settle
-time.sleep(0.5)
+robotController.start()
 
-# Send 10us pulse to trigger
-GPIO.output(GPIO_TRIGGER, True)
-time.sleep(0.00001)
-GPIO.output(GPIO_TRIGGER, False)
-start = time.time()
-while GPIO.input(GPIO_ECHO)==0:
-  start = time.time()
+time.sleep(2)
 
-while GPIO.input(GPIO_ECHO)==1:
-  stop = time.time()
+robotController.setDirection("forward")
 
-# Calculate pulse length
-elapsed = stop-start
+time.sleep(5)
 
-# Distance pulse travelled in that time is time
-# multiplied by the speed of sound (cm/s)
-distance = elapsed * 34000
-
-# That was the distance there and back so halve the value
-distance = distance / 2
-
-print "Distance : %.1f" % distance
-
-# Reset GPIO settings
-GPIO.cleanup()
