@@ -13,10 +13,14 @@ class RobotController(Thread):
 		self.tAv = Telemetre(telemetreAv[0],telemetreAv[1],telemetreAv[2])
 		self.tAr = Telemetre(telemetreAr[0],telemetreAr[1],telemetreAr[2])
 		self.direction = "stop"
+		self.stop = False
 
 
 	def run(self):
 		while 1:
+			if self.stop:
+				break
+
 			move = "stop"
 
 			if "backward" in self.direction:
@@ -30,9 +34,9 @@ class RobotController(Thread):
 
 			self.moteurController.move(move)
 
-			time.sleep(0.1)
+			time.sleep(0.3)
 
 
 	def setDirection(self, direction):
-		print "pass"
+		print "RobotController.setDirection"
 		self.direction = direction

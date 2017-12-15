@@ -16,7 +16,7 @@ class MoteurController:
 		self.moteurArG.setPuissance(puissance)
 
 	def move(self, direction):
-		print direction
+		print("MoteurController.move direction : " + str(direction))
 		if "forward" in direction:
 			self.forward()
 		elif "backward" in direction:
