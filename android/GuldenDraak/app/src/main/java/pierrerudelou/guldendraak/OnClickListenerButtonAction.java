@@ -1,5 +1,6 @@
 package pierrerudelou.guldendraak;
 
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
