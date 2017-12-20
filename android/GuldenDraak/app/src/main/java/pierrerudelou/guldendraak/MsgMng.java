@@ -21,10 +21,12 @@ public class MsgMng {
     private PrintWriter out; // Used to send
     private BufferedReader in; // Used to receive
     public SocketStatus socketStatus;
+    public boolean checkStatus = false;
     /** Construct a message manager */
     MsgMng(){
         // Open socket with SERVERPORT and SERVER_IP
         socketStatus = SocketStatus.unknown;
+        checkStatus = true;
         startCheckConnection();
     }
 
@@ -34,7 +36,7 @@ public class MsgMng {
             @Override
             public void run() {
                 try {
-                    if (socket.isConnected() && !socket.isClosed()) {
+                    if (socket!=null && socket.isConnected() && !socket.isClosed()) {
                         out.println(action.toString());
                         out.flush();
 
@@ -83,6 +85,10 @@ public class MsgMng {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+
+                    if (!checkStatus){
+                        break;
+                    }
                 }
             }
         };
@@ -113,6 +119,7 @@ public class MsgMng {
                 in.close();
                 Log.e("SOCKET_CLOSED", "Socket closed.");
             }
+            checkStatus = false;
         } catch (IOException e) {
             e.printStackTrace();
         }
