@@ -32,7 +32,8 @@ class RobotController(Thread):
 
 					move = self.direction
 
-			self.moteurController.move(move)
+			if self.direction != move:
+				self.moteurController.move(move)
 
 			time.sleep(0.3)
 
