@@ -21,19 +21,18 @@ public class OnClickListenerButtonAction implements View.OnTouchListener {
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
+            switch(event.getAction()) {
 
-        switch(event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    // Pressed
+                    msgMng.sendMessage(buttonAction);
+                    return true;
 
-            case MotionEvent.ACTION_DOWN:
-                // Pressed
-                msgMng.sendMessage(buttonAction);
-                return true;
-
-            case MotionEvent.ACTION_UP:
-                // Released
-                msgMng.sendMessage(MainActivity.ButtonAction.stop);
-                return true;
-        }
+                case MotionEvent.ACTION_UP:
+                    // Released
+                    msgMng.sendMessage(MainActivity.ButtonAction.stop);
+                    return true;
+            }
         return false;
     }
 }

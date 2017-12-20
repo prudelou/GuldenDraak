@@ -3,6 +3,7 @@ package pierrerudelou.guldendraak;
 
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -27,13 +28,15 @@ public class MainActivity extends AppCompatActivity {
         //((TextView)findViewById(R.id.textViewSocket)).setText("Socket : "+msnMng.socketStatus.toString());
 
         // Initialize direction buttons listeners
-        this.initButtonDirectionListeners();
+        //this.initButtonDirectionListeners();
         // Initialize SeekBar for power management
         this.initSeekBar();
         // Initialize mediaPlayer for streaming
         this.initMediaPlayer();
         // Initialize socket connection
         this.initConnection();
+        // Initialize photo button
+        this.initButtonPhoto();
     }
 
     @Override
@@ -50,7 +53,27 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.buttonDown).setOnTouchListener(new OnClickListenerButtonAction(ButtonAction.backward,msnMng));
         findViewById(R.id.buttonLeft).setOnTouchListener(new OnClickListenerButtonAction(ButtonAction.left,msnMng));
         findViewById(R.id.buttonRight).setOnTouchListener(new OnClickListenerButtonAction(ButtonAction.right,msnMng));
-        //findViewById(R.id.buttonPhoto).setOnTouchListener(new OnClickListenerButtonAction(ButtonAction.photo,msnMng));
+    }
+
+    /** MainActivity : Initialize photo button */
+    private void initButtonPhoto(){
+        findViewById(R.id.buttonPhoto).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (msnMng!=null){
+                    String response = msnMng.takePhoto();
+                    openResponseDIalog(response);
+                }
+                else{
+                    openResponseDIalog("Error. Please check server connection.");
+                }
+            }
+        });
+    }
+
+    private void openResponseDIalog(String response){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(response).setTitle("Response");
+        builder.create().show();
     }
 
     /** MainActivity : Initialize SeekBar for power management. */
@@ -105,8 +128,12 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (msnMng!=null){
                     msnMng.closeSocket();
+                    msnMng.openSocket();
                 }
-                msnMng = new MsgMng();
+                else{
+                    msnMng = new MsgMng();
+                    initButtonDirectionListeners();
+                }
             }
         });
     }
