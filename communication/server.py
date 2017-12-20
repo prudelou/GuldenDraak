@@ -23,24 +23,38 @@ hote = ''
 port = 12800
 
 def handler(signum, frame):
-  print "catch ctrl-z"
-  exit(0)
+	print "catch ctrl-z"
+	exit(0)
 
 def exit_handler():
-  print "catch ctrl-z"
-  if connexion_avec_client != None:
-    connexion_avec_client.close()
+	print "catch ctrl-z"
+	if connexion_avec_client != None:
+		connexion_avec_client.close()
 
-  if connexion_principale != None:
-    connexion_principale.close()
+	if connexion_principale != None:
+		connexion_principale.close()
 
-  if robotController != None:
-    robotController.stop = True
-    robotController.join()
+	if robotController != None:
+		robotController.stop = True
+		robotController.join()
 
 
-  GPIO.cleanup()
-  print "exit"
+	GPIO.cleanup()
+	print "exit"
+
+def normalize_recognition():
+	file = open("answers.txt", "r")
+	answer = file.read()
+	file.close()
+
+	answer = answer.split("\n")
+	first_answer = answer[0]
+	possibility, score = first_answer.split("(score = ")
+	first_possibility = possibility.split(", ")[0]
+	score.replace(')','')
+	return first_possibility
+
+
 
 
 
@@ -73,7 +87,15 @@ def wait_action(connexion_avec_client):
 			connexion_avec_client.send(b"camera\n")
 		finally:
 			print "end camera"
-
+	elif "photo" in msg_recu:
+		print "take photo ..."
+		os.system('raspistill -o photo.jpg')
+		print "recognition progress ..."
+		os.system('python ~/ImageRecognition/models/tutorials/image/imagenet/classify_image.py --image_file="photo.jpg" > answers.txt')
+		print "normalized progress ..."
+		response = normalize_recognition()
+		print "send response : " + response
+		connexion_avec_client.send(response + "\n")
 	else:
 		print("Fermeture de la connexion")
 		connexion_avec_client.send(b"close")
@@ -99,8 +121,8 @@ print("Server : Le serveur écoute à présent sur le port {}".format(port))
 
 
 try:
-  while(1):
-    connexion_avec_client = wait_action(connexion_avec_client)
-    time.sleep(0.5)
+	while(1):
+		connexion_avec_client = wait_action(connexion_avec_client)
+		time.sleep(0.5)
 finally:
-  exit_handler()
+	exit_handler()
