@@ -17,8 +17,25 @@
                 android:id="@+id/textViewSocket"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="right"
                 android:layout_weight="1"
-                android:text="Socket : none" />
+                android:text="Socket : " />
+
+            <TextView
+                android:id="@+id/textViewSocketValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:layout_weight="1"
+                android:text="none" />
+
+            <Button
+                android:id="@+id/buttonConnection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Socket" />
+
             <Button
                 android:id="@+id/buttonStream"
                 android:layout_width="wrap_content"
@@ -121,7 +138,7 @@
                 android:layout_height="30dp"
                 android:layout_weight="1"
                 android:gravity="left"
-                android:text="80 " />
+                android:text="80%" />
         </TableRow>
 
     </TableLayout>

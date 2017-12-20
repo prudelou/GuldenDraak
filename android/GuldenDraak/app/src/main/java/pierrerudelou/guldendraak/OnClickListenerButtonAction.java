@@ -21,6 +21,7 @@ public class OnClickListenerButtonAction implements View.OnTouchListener {
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
+
         switch(event.getAction()) {
 
             case MotionEvent.ACTION_DOWN:
