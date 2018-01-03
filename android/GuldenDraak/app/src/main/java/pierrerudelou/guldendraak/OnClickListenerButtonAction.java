@@ -25,12 +25,12 @@ public class OnClickListenerButtonAction implements View.OnTouchListener {
 
                 case MotionEvent.ACTION_DOWN:
                     // Pressed
-                    msgMng.sendMessage(buttonAction);
+                    msgMng.sendMessage(buttonAction.toString());
                     return true;
 
                 case MotionEvent.ACTION_UP:
                     // Released
-                    msgMng.sendMessage(MainActivity.ButtonAction.stop);
+                    msgMng.sendMessage(MainActivity.ButtonAction.stop.toString());
                     return true;
             }
         return false;

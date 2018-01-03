@@ -1,14 +1,25 @@
 package pierrerudelou.guldendraak;
 
 
+import android.app.ActionBar;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.MediaController;
 import android.widget.SeekBar;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.VideoView;
 
@@ -25,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         //((TextView)findViewById(R.id.textViewSocket)).setText("Socket : "+msnMng.socketStatus.toString());
 
         // Initialize direction buttons listeners
@@ -35,8 +47,59 @@ public class MainActivity extends AppCompatActivity {
         this.initMediaPlayer();
         // Initialize socket connection
         this.initConnection();
-        // Initialize photo button
+        // Initialize photo buttons
         this.initButtonPhoto();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        //ajoute les entrées de menu_test à l'ActionBar
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_edit:
+
+                final EditText ipTxt = new EditText(this);
+                final EditText portTxt = new EditText(this);
+                final TextView ipView = new TextView(this);
+                final TextView portView = new TextView(this);
+
+
+                ipTxt.setText(msnMng.getIpServer());
+                portTxt.setText(msnMng.getPortServer().toString());
+                ipView.setText("IP : ");
+                portView.setText("Port : ");
+
+                TableLayout tl = new TableLayout(this);
+                tl.addView(ipView);
+                tl.addView(ipTxt);
+                tl.addView(portView);
+                tl.addView(portTxt);
+
+                tl.setPadding(10,0,0,0);
+
+                new AlertDialog.Builder(this)
+                        .setTitle("Server preferences")
+                        .setView(tl)
+                        .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                msnMng.setIpServer(ipTxt.getText().toString());
+                                msnMng.setPortServer(Integer.parseInt(portTxt.getText().toString()));
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                            }
+                        })
+                        .show();
+                return true;
+            default:
+                return false;
+        }
     }
 
     @Override
@@ -91,7 +154,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                // nothing
+
+                msnMng.sendMessage("puissance:"+seekBar.getProgress());
+
             }
         });
     }
@@ -103,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.buttonStream).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Code here executes on main thread after user presses button
-                String url = "http://192.168.43.43:5000";
+                String url = "http://"+msnMng.getIpServer()+":5000";
                 videoView = (VideoView)findViewById(R.id.videoView);
                 mediaController.setAnchorView(videoView);
                 Uri video = Uri.parse(url);
@@ -123,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
     /** MainActivity : Initialize socket connection. */
     private void initConnection(){
         this.mediaController = new MediaController(this);
-
+        msnMng = new MsgMng();
         findViewById(R.id.buttonConnection).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (msnMng!=null){
