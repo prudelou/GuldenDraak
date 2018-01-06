@@ -4,7 +4,7 @@ import time
 import os
 import RPi.GPIO as GPIO
 
-sys.path.insert(0, '../Moteur')
+sys.path.insert(0, '/home/pi/Git/GuldenDraak/Moteur')
 
 from RobotController import RobotController
 import signal
@@ -43,7 +43,7 @@ def exit_handler():
 	print "exit"
 
 def normalize_recognition():
-	file = open("answers.txt", "r")
+	file = open("/home/pi/ImageRecognition/answers.txt", "r")
 	answer = file.read()
 	file.close()
 
@@ -88,14 +88,15 @@ def wait_action(connexion_avec_client):
 		finally:
 			print "end camera"
 	elif "photo" in msg_recu:
-		print "take photo ..."
-		os.system('raspistill -o photo.jpg')
 		print "recognition progress ..."
-		os.system('python ~/ImageRecognition/models/tutorials/image/imagenet/classify_image.py --image_file="photo.jpg" > answers.txt')
+		os.system('python /home/pi/ImageRecognition/models/tutorials/image/imagenet/classify_image.py --image_file="/tmp/pic.jpg" > /home/pi/ImageRecognition/answers.txt')
 		print "normalized progress ..."
 		response = normalize_recognition()
 		print "send response : " + response
 		connexion_avec_client.send(response + "\n")
+	elif "puissance" in msg_recu:
+		puissance = int(msg_recu.split(":")[1])
+		robotController.setMaxPuissance(puissance)
 	else:
 		print("Fermeture de la connexion")
 		connexion_avec_client.send(b"close")
@@ -107,18 +108,16 @@ def wait_action(connexion_avec_client):
 #catch ctrl-Z
 signal.signal(signal.SIGTSTP, handler)
 
-GPIO.setmode(GPIO.BOARD)
-robotController = RobotController(moteurAvDroit, moteurAvGauche, moteurArDroit, moteurArGauche, tAv, tAr)
-
-robotController.start()
-
 
 connexion_principale = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 connexion_principale.bind((hote, port))
 connexion_principale.listen(5)
 print("Server : Le serveur écoute à présent sur le port {}".format(port))
 
+GPIO.setmode(GPIO.BOARD)
+robotController = RobotController(moteurAvDroit, moteurAvGauche, moteurArDroit, moteurArGauche, tAv, tAr)
 
+robotController.start()
 
 try:
 	while(1):
