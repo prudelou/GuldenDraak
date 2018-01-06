@@ -126,8 +126,6 @@ public class MainActivity extends AppCompatActivity  {
                         .show();
                 return true;
             case R.id.action_connection:
-                msnMng = new MsgMng();
-
                 if (msnMng!=null){
                     msnMng.closeSocket();
                     try {
@@ -223,5 +221,7 @@ public class MainActivity extends AppCompatActivity  {
 
     /** MainActivity : Initialize socket connection. */
     private void initConnection(){
+        msnMng = new MsgMng();
+
     }
 }
