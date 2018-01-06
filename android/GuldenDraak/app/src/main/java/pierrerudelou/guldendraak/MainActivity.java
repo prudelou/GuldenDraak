@@ -28,9 +28,15 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.VideoView;
 
-import java.io.IOException;
+import com.github.niqdev.mjpeg.DisplayMode;
+import com.github.niqdev.mjpeg.Mjpeg;
+import com.github.niqdev.mjpeg.MjpegSurfaceView;
 
-public class MainActivity extends AppCompatActivity implements SurfaceHolder.Callback, MediaPlayer.OnPreparedListener {
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+
+public class MainActivity extends AppCompatActivity  {
 
 
 
@@ -38,10 +44,8 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     public enum ButtonAction {forward, backward, left, right, stop, photo}
     /** Manage messages */
     public MsgMng msnMng;
-    public SurfaceView surfaceView;
-    public SurfaceHolder surfaceHolder;
-    private MediaPlayer mMediaPlayer;
     private static final String VIDEO_PATH = "http://192.168.43.43:8080/?action=stream";
+    private MjpegSurfaceView mpegSurfaceView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +57,9 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
         // Initialize SeekBar for power management
         this.initSeekBar();
         // Initialize mediaPlayer for streaming
-        this.initMediaPlayer();
+        //this.initMediaPlayer();
+
+
         // Initialize socket connection
         this.initConnection();
 
@@ -62,6 +68,15 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
 
         // Initialize photo buttons
         this.initButtonPhoto();
+
+        mpegSurfaceView = (MjpegSurfaceView)findViewById(R.id.surfaceView);
+        Mjpeg.newInstance()
+                .open(VIDEO_PATH, 100000)
+                .subscribe(inputStream -> {
+                    mpegSurfaceView.setSource(inputStream);
+                    mpegSurfaceView.setDisplayMode(DisplayMode.BEST_FIT);
+                    mpegSurfaceView.showFps(true);
+                });
     }
 
     @Override
@@ -184,9 +199,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
 
     /** MainActivity : Initialize MediaPlayer for video stream. */
     private void initMediaPlayer(){
-        surfaceView = (SurfaceView)findViewById(R.id.surfaceView);
-        surfaceHolder = surfaceView.getHolder();
-        surfaceHolder.addCallback(MainActivity.this);
+
     }
 
     /** MainActivity : Initialize socket connection. */
@@ -211,54 +224,4 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
             }
         });
     }
-
-    @Override
-    public void onPrepared(MediaPlayer mp) {
-        mMediaPlayer.start();
-
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        releaseMediaPlayer();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        releaseMediaPlayer();
-    }
-
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        mMediaPlayer = new MediaPlayer();
-        mMediaPlayer.setDisplay(surfaceHolder);
-        try {
-            mMediaPlayer.setDataSource(VIDEO_PATH);
-            mMediaPlayer.prepare();
-            mMediaPlayer.setOnPreparedListener(MainActivity.this);
-            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void releaseMediaPlayer() {
-        if (mMediaPlayer != null) {
-            mMediaPlayer.release();
-            mMediaPlayer = null;
-        }
-    }
-
-    @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-
-    }
-
 }
