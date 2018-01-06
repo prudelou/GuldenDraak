@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_connection"
+        android:icon="@android:drawable/ic_menu_share"
+        android:title="Preferences"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_edit"
+        android:icon="@android:drawable/ic_menu_preferences"
+        android:title="Preferences"
+        app:showAsAction="ifRoom" />
+
+
+
+</menu>
