@@ -125,6 +125,24 @@ public class MainActivity extends AppCompatActivity  {
                         })
                         .show();
                 return true;
+            case R.id.action_connection:
+                msnMng = new MsgMng();
+
+                if (msnMng!=null){
+                    msnMng.closeSocket();
+                    try {
+                        msnMng.openSocket();
+                    } catch (IOException | android.os.NetworkOnMainThreadException e) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                        builder.setMessage("Connection impossible.").setTitle("Error");
+                        builder.create().show();
+                    }
+                }
+                else{
+                    msnMng = new MsgMng();
+                    initButtonDirectionListeners();
+                }
+                return true;
             default:
                 return false;
         }
@@ -180,7 +198,7 @@ public class MainActivity extends AppCompatActivity  {
         ((SeekBar)findViewById(R.id.seekBar)).setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                ((TextView)findViewById(R.id.textViewPowerValue)).setText(progress+"%");
+                ((TextView)findViewById(R.id.textViewPowerValue)).setText((20 + progress)+"%");
             }
 
             @Override
@@ -191,10 +209,11 @@ public class MainActivity extends AppCompatActivity  {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
 
-                msnMng.sendMessage("puissance:"+seekBar.getProgress());
+                msnMng.sendMessage("puissance:"+(seekBar.getProgress()+20));
 
             }
         });
+        ((SeekBar)findViewById(R.id.seekBar)).setProgress( ((SeekBar)findViewById(R.id.seekBar)).getProgress());
     }
 
     /** MainActivity : Initialize MediaPlayer for video stream. */
@@ -204,23 +223,9 @@ public class MainActivity extends AppCompatActivity  {
 
     /** MainActivity : Initialize socket connection. */
     private void initConnection(){
-        msnMng = new MsgMng();
         findViewById(R.id.buttonConnection).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (msnMng!=null){
-                    msnMng.closeSocket();
-                    try {
-                        msnMng.openSocket();
-                    } catch (IOException | android.os.NetworkOnMainThreadException e) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-                        builder.setMessage("Connection impossible.").setTitle("Error");
-                        builder.create().show();
-                    }
-                }
-                else{
-                    msnMng = new MsgMng();
-                    initButtonDirectionListeners();
-                }
+
             }
         });
     }

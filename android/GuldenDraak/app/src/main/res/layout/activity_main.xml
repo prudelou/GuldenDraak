@@ -10,26 +10,6 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
 
-        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-
-            <Button
-                android:id="@+id/buttonConnection"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                 android:layout_weight="1"
-                 android:text="Connection"/>
-
-        <Button
-            android:id="@+id/buttonStream"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Stream"/>
-    </TableRow>
-
     <TableRow>
 
         <com.github.niqdev.mjpeg.MjpegSurfaceView
@@ -107,9 +87,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:min="20"
-            android:max="100"
-            android:progress="80"/>
+            android:max="80"
+            android:progress="60"/>
     </TableRow>
 
     <TableRow
