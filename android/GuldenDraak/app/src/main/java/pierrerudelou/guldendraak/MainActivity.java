@@ -2,6 +2,7 @@ package pierrerudelou.guldendraak;
 
 
 import android.app.ActionBar;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,6 +13,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +24,8 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.VideoView;
+
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -123,8 +127,16 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.buttonPhoto).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (msnMng!=null){
+                    ProgressDialog progress = new ProgressDialog(v.getContext());
+                    progress.setTitle("Loading");
+                    progress.setMessage("Wait while recognition...");
+                    progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+                    progress.show();
                     String response = msnMng.takePhoto();
+                    progress.dismiss();
+
                     openResponseDIalog(response);
+
                 }
                 else{
                     openResponseDIalog("Error. Please check server connection.");
@@ -193,7 +205,13 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (msnMng!=null){
                     msnMng.closeSocket();
-                    msnMng.openSocket();
+                    try {
+                        msnMng.openSocket();
+                    } catch (IOException | android.os.NetworkOnMainThreadException e) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+                        builder.setMessage("Connection impossible.").setTitle("Error");
+                        builder.create().show();
+                    }
                 }
                 else{
                     msnMng = new MsgMng();

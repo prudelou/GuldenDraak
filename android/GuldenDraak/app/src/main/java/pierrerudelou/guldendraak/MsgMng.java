@@ -1,5 +1,6 @@
 package pierrerudelou.guldendraak;
 
+import android.app.ProgressDialog;
 import android.util.Log;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,13 +28,17 @@ public class MsgMng {
     private boolean endOfActionThread = false;
     private String responsePhoto;
     /** Construct a message manager */
-    MsgMng(){
+    MsgMng() {
         // Open socket with SERVERPORT and SERVER_IP
         socketStatus = SocketStatus.unknown;
         checkStatus = true;
         this.ipServer = SERVER_IP;
         this.portServer = new Integer(SERVERPORT);
-        startCheckConnection();
+        try {
+            startCheckConnection();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /** Send a message to Server and return response of server */
@@ -55,10 +60,18 @@ public class MsgMng {
                     }
                 } catch (java.net.SocketTimeoutException e) {
                     Log.e("TIMEOUT", "Socket time out.");
-                    openSocket();
+                    try {
+                        openSocket();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
                 } catch(java.net.SocketException e){
                     Log.e("CLOSE", "Socket close.");
-                    openSocket();
+                    try {
+                        openSocket();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                     Log.e("SEND" + action.toString(), "Error during send.");
@@ -74,12 +87,16 @@ public class MsgMng {
     }
 
     /** Start loop thread daemon which detect socket connection and update socketStatus */
-    public void startCheckConnection(){
+    public void startCheckConnection() throws IOException{
         Thread sendThread = new Thread(){
             @Override
             public void run(){
 
-                openSocket();
+                try {
+                    openSocket();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
                 while (true){
                     if (socket != null && socket.isConnected() && !socket.isClosed()){
@@ -88,7 +105,11 @@ public class MsgMng {
                     else{
                         socketStatus = SocketStatus.disconnected;
                         Log.e("SOCKET_STATUS", "Socket "+socketStatus.toString()+".");
-                        openSocket();
+                        try {
+                            openSocket();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
 
                     // Sleep 1000ms
@@ -112,9 +133,12 @@ public class MsgMng {
     public String takePhoto(){
         if (socket!=null && socket.isConnected()){
             sendMessage(MainActivity.ButtonAction.photo.toString());
+
+// To dismiss the dialog
             while(!endOfActionThread){
                 Log.e("PHOTO", ""+endOfActionThread);
             }
+
             endOfActionThread = false;
             return responsePhoto;
 
@@ -123,17 +147,15 @@ public class MsgMng {
     }
 
     /** Open socket with SEVER_IP and SERVERPORT */
-    public void openSocket(){
-        try {
+    public void openSocket() throws IOException{
+
             this.socket = new Socket(InetAddress.getByName(ipServer), this.portServer);
             this.socket.setSoTimeout(60000);
             out = new PrintWriter(socket.getOutputStream());
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
             Log.e("SOCKET_OPEN", "Socket opened.");
-        } catch (IOException | android.os.NetworkOnMainThreadException e) {
-            Log.e("ERROR", e.getMessage());
-        }
+
     }
 
     /** Close current socket */
