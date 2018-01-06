@@ -223,10 +223,5 @@ public class MainActivity extends AppCompatActivity  {
 
     /** MainActivity : Initialize socket connection. */
     private void initConnection(){
-        findViewById(R.id.buttonConnection).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-
-            }
-        });
     }
 }
