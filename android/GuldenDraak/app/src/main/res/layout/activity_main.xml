@@ -31,13 +31,14 @@
 
     <TableRow>
 
-        <VideoView
-            android:id="@+id/videoView"
+        <SurfaceView
+            android:id="@+id/surfaceView"
             android:layout_width="match_parent"
             android:layout_height="255dp"
             android:layout_marginTop="8dp"
             android:layout_weight="1"
             android:layout_span="2" />
+
     </TableRow>
 
     <TableRow
@@ -104,6 +105,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:min="20"
             android:max="100"
             android:progress="80"/>
     </TableRow>

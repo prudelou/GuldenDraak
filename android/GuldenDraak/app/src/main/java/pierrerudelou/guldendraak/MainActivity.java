@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.preference.PreferenceManager;
@@ -16,6 +17,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.MediaController;
@@ -27,14 +30,18 @@ import android.widget.VideoView;
 
 import java.io.IOException;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SurfaceHolder.Callback, MediaPlayer.OnPreparedListener {
+
+
 
     /**Enum of action names */
     public enum ButtonAction {forward, backward, left, right, stop, photo}
     /** Manage messages */
     public MsgMng msnMng;
-    public  VideoView videoView;
-    public  MediaController mediaController;
+    public SurfaceView surfaceView;
+    public SurfaceHolder surfaceHolder;
+    private MediaPlayer mMediaPlayer;
+    private static final String VIDEO_PATH = "http://192.168.43.43:8080/?action=stream";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -177,31 +184,13 @@ public class MainActivity extends AppCompatActivity {
 
     /** MainActivity : Initialize MediaPlayer for video stream. */
     private void initMediaPlayer(){
-        this.mediaController = new MediaController(this);
-
-        findViewById(R.id.buttonStream).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // Code here executes on main thread after user presses button
-                String url = "http://"+msnMng.getIpServer()+":5000";
-                videoView = (VideoView)findViewById(R.id.videoView);
-                mediaController.setAnchorView(videoView);
-                Uri video = Uri.parse(url);
-                videoView.setMediaController(mediaController);
-                videoView.setVideoURI(video);
-                videoView.requestFocus();
-                videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener()
-                {
-                    public void onPrepared(MediaPlayer mp){
-                        videoView.start();
-                    }
-                });
-            }
-        });
+        surfaceView = (SurfaceView)findViewById(R.id.surfaceView);
+        surfaceHolder = surfaceView.getHolder();
+        surfaceHolder.addCallback(MainActivity.this);
     }
 
     /** MainActivity : Initialize socket connection. */
     private void initConnection(){
-        this.mediaController = new MediaController(this);
         msnMng = new MsgMng();
         findViewById(R.id.buttonConnection).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -221,6 +210,55 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    public void onPrepared(MediaPlayer mp) {
+        mMediaPlayer.start();
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        releaseMediaPlayer();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        releaseMediaPlayer();
+    }
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        mMediaPlayer = new MediaPlayer();
+        mMediaPlayer.setDisplay(surfaceHolder);
+        try {
+            mMediaPlayer.setDataSource(VIDEO_PATH);
+            mMediaPlayer.prepare();
+            mMediaPlayer.setOnPreparedListener(MainActivity.this);
+            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void releaseMediaPlayer() {
+        if (mMediaPlayer != null) {
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+        }
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+
     }
 
 }
