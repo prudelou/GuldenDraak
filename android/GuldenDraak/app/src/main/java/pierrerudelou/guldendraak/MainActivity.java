@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         //((TextView)findViewById(R.id.textViewSocket)).setText("Socket : "+msnMng.socketStatus.toString());
 
         // Initialize direction buttons listeners
-        //this.initButtonDirectionListeners();
+        this.initButtonDirectionListeners();
         // Initialize SeekBar for power management
         this.initSeekBar();
         // Initialize mediaPlayer for streaming
