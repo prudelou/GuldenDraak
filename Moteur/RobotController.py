@@ -35,7 +35,7 @@ class RobotController(Thread):
 					print "needStop"
 
 			self.moteurController.move(move)
-
+			sys.stdout.flush()
 			time.sleep(0.3)
 
 

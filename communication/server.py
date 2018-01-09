@@ -17,8 +17,8 @@ moteurAvDroit = [22, 26, 24]
 moteurAvGauche = [11, 13, 15]
 moteurArDroit = [36, 38, 40]
 moteurArGauche = [19, 23, 21]
-tAv = [37,35,20]
-tAr = [31,33,20]
+tAv = [37,35,40]
+tAr = [31,33,40]
 hote = ''
 port = 12800
 
@@ -46,6 +46,8 @@ def normalize_recognition():
 	file = open("/home/pi/ImageRecognition/answers.txt", "r")
 	answer = file.read()
 	file.close()
+	os.system("sudo rm /home/pi/ImageRecognition/answers.txt")
+	os.system('sudo rm /home/pi/ImageRecognition/pic.jpg')
 
 	answer = answer.split("\n")
 	first_answer = answer[0]
@@ -89,7 +91,8 @@ def wait_action(connexion_avec_client):
 			print "end camera"
 	elif "photo" in msg_recu:
 		print "recognition progress ..."
-		os.system('python /home/pi/ImageRecognition/models/tutorials/image/imagenet/classify_image.py --image_file="/tmp/pic.jpg" > /home/pi/ImageRecognition/answers.txt')
+		os.system('sudo cp /tmp/pic.jpg /home/pi/ImageRecognition/pic.jpg')
+		os.system('sudo python /home/pi/ImageRecognition/models/tutorials/image/imagenet/classify_image.py --image_file="/home/pi/ImageRecognition/pic.jpg" > /home/pi/ImageRecognition/answers.txt')
 		print "normalized progress ..."
 		response = normalize_recognition()
 		print "send response : " + response
@@ -102,7 +105,6 @@ def wait_action(connexion_avec_client):
 		connexion_avec_client.send(b"close")
 		connexion_avec_client.close()
 		connexion_avec_client = None
-
 	return connexion_avec_client
 
 #catch ctrl-Z

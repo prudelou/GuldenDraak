@@ -30,7 +30,7 @@ class MoteurController:
 				self.puissance+= 5
 				if self.puissance > self.max_puissance:
 					self.puissance = self.max_puissance
-		print self.puissance
+		print "Puissance : " + str(self.puissance)
 		self.moteurAvD.pwd.start(self.puissance)
 		self.moteurAvG.pwd.start(self.puissance)
 		self.moteurArD.pwd.start(self.puissance)
@@ -38,6 +38,8 @@ class MoteurController:
 
 	def move(self, direction):
 		#print("MoteurController.move direction : " + str(direction))
+		print "Direction : " + direction
+
 		if "forward" in direction:
 			self.forward()
 		elif "backward" in direction:
@@ -67,17 +69,17 @@ class MoteurController:
 
 	def right(self):
 		self.direction = "right"
-		self.moteurAvD.stop()
+		self.moteurAvD.backward()
 		self.moteurAvG.forward()
-		self.moteurArD.stop()
+		self.moteurArD.backward()
 		self.moteurArG.forward()
 
 	def left(self):
 		self.direction = "left"
 		self.moteurAvD.forward()
-		self.moteurAvG.stop()
+		self.moteurAvG.backward()
 		self.moteurArD.forward()
-		self.moteurArG.stop()
+		self.moteurArG.backward()
 
 	def stop(self):
 		self.direction = "stop"
