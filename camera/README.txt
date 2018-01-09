@@ -10,3 +10,9 @@ pour réaliser un stream basic avec pc linux il faut:
 
 
 Ne sera probablement pas utilisé avec android
+
+
+Nouvelle solution 
+
+capture 1 image tout les 300ms (-tl), -bm (burstmode), -q (qualité /100)
+raspistill -bm --nopreview -w 640 -h 480 -q 5 -o /tmp/stream/pic.jpg -tl 300 -t 9999999

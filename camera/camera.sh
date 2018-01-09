@@ -1,3 +1,7 @@
 #!/bin/bash
 
-raspivid -t 0 -w 1280 -h 720 -o - | nc 192.168.43.156 5001
+raspistill -bm --nopreview -w 640 -h 480 -q 5 -o /tmp/pic.jpg -tl 300 -t 9999999 &
+
+LD_LIBRARY_PATH=/usr/local/lib mjpg_streamer -i "input_file.so -f /tmp -n pic.jpg" -o "output_http.so -w ./www" &
+
+

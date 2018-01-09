@@ -1,65 +1,33 @@
 import RPi.GPIO as GPIO
-from MoteurController import MoteurController
+from RobotController import RobotController
 from time import sleep
 
 moteurAvDroit = [22, 26, 24]
 moteurAvGauche = [11, 13, 15]
 moteurArDroit = [36, 38, 40]
 moteurArGauche = [19, 23, 21]
+tAv = [37,35,20]
+tAr = [31,33,20]
+GPIO.cleanup()
 GPIO.setmode(GPIO.BOARD)
-moteurController = MoteurController(moteurAvDroit, moteurAvGauche, moteurArDroit, moteurArGauche)
+robotController = RobotController(moteurAvDroit, moteurAvGauche, moteurArDroit, moteurArGauche, tAv, tAr)
+robotController.start()
 
-sleep(2)
-
-moteurController.setPuissance(20)
-moteurController.forward()
-
-sleep(2)
-
-moteurController.setPuissance(80)
-
-sleep(2)
-
-moteurController.stop()
-
-sleep(2)
-
-moteurController.setPuissance(20)
-moteurController.backward()
-
-sleep(2)
-
-moteurController.setPuissance(80)
-
-sleep(2)
-
-moteurController.stop()
-
-sleep(2)
-
-moteurController.setPuissance(20)
-moteurController.right()
-
-sleep(2)
-
-moteurController.setPuissance(80)
-
-sleep(2)
-
-moteurController.stop()
-
-sleep(2)
-
-moteurController.setPuissance(20)
-moteurController.left()
-
-sleep(2)
-
-moteurController.setPuissance(80)
-
-sleep(2)
-
-moteurController.stop()
-
+while 1:
+  msg_recu = input()
+  print msg_recu
+  if "forward" in msg_recu:
+    robotController.setDirection("forward")
+  elif "backward" in msg_recu:
+    robotController.setDirection("backward")
+  elif "right" in msg_recu:
+    robotController.setDirection("right")
+  elif "left" in msg_recu:
+    robotController.setDirection("left")
+  elif "stop" in msg_recu:
+    robotController.setDirection("stop")
+  elif "puissance" in msg_recu:
+    puissance = int(msg_recu.split(":")[1])
+    robotController.setMaxPuissance(puissance)
 
 GPIO.cleanup()
