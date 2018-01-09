@@ -10,108 +10,114 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
 
-    <TableRow>
+        <TableRow>
 
-        <com.github.niqdev.mjpeg.MjpegSurfaceView
-            android:id="@+id/surfaceView"
-            android:layout_height="255dp"
-            android:layout_marginTop="8dp"
-            android:layout_weight="1"
-            android:layout_span="2"
-            stream:type="stream_default"/>
+            <com.github.niqdev.mjpeg.MjpegSurfaceView
+                android:id="@+id/surfaceView"
+                android:layout_height="255dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:layout_span="2"
+                stream:type="stream_default"/>
 
 
-    </TableRow>
+        </TableRow>
 
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <Button
-            android:id="@+id/buttonUp"
+        <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Up" />
-    </TableRow>
+            android:layout_height="match_parent">
 
-    <TableRow
-        android:layout_width="match_parent"
+            <Button
+                android:id="@+id/buttonUp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Up" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true">
+
+            <Button
+                android:id="@+id/buttonLeft"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_centerHorizontal="true"
+                android:text="Left" />
+
+            <Button
+                android:id="@+id/buttonPhoto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerHorizontal="true"
+                android:layout_weight="1"
+                android:text="Photo"/>
+
+            <Button
+                android:id="@+id/buttonRight"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerHorizontal="true"
+                android:layout_weight="1"
+                android:text="Right" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/buttonDown"
+                android:layout_width="54dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:text="Down" />
+        </TableRow>
+    </TableLayout>
+
+    <TableLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true">
-
-        <Button
-            android:id="@+id/buttonLeft"
+        android:layout_alignParentBottom="true">
+        <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:layout_centerHorizontal="true"
-            android:text="Left" />
+            android:layout_alignParentBottom="true">
 
-        <Button
-            android:id="@+id/buttonPhoto"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerHorizontal="true"
-            android:layout_weight="1"
-            android:text="Photo"/>
+            <SeekBar
+                android:id="@+id/seekBar"
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:layout_weight="1"
+                android:max="80"
+                android:progress="60" />
+        </TableRow>
 
-        <Button
-            android:id="@+id/buttonRight"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerHorizontal="true"
-            android:layout_weight="1"
-            android:text="Right" />
-    </TableRow>
+        <TableRow
+            android:layout_width="318dp"
+            android:layout_height="44dp"
+            android:gravity="center_horizontal"
+            android:layout_alignParentBottom="true">
 
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/textViewPower"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="Power : " />
 
-        <Button
-            android:id="@+id/buttonDown"
-            android:layout_width="54dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:text="Down" />
-    </TableRow>
-
-
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <SeekBar
-            android:id="@+id/seekBar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:max="80"
-            android:progress="60"/>
-    </TableRow>
-
-    <TableRow
-        android:layout_width="318dp"
-        android:layout_height="44dp"
-        android:gravity="center_horizontal">
-
-        <TextView
-            android:id="@+id/textViewPower"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:layout_weight="1"
-            android:gravity="right"
-            android:text="Power : " />
-
-        <TextView
-            android:id="@+id/textViewPowerValue"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:layout_weight="1"
-            android:gravity="left"
-            android:text="80%" />
-    </TableRow>
+            <TextView
+                android:id="@+id/textViewPowerValue"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:gravity="left"
+                android:text="80%" />
+        </TableRow>
 
 </TableLayout>
 </LinearLayout>

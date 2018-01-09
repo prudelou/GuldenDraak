@@ -121,6 +121,7 @@ public class MainActivity extends AppCompatActivity  {
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
+                                //Nothing
                             }
                         })
                         .show();
@@ -166,18 +167,22 @@ public class MainActivity extends AppCompatActivity  {
     private void initButtonPhoto(){
         findViewById(R.id.buttonPhoto).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (msnMng!=null){
-                    ProgressDialog progress = new ProgressDialog(v.getContext());
+                if (msnMng != null) {
+                    final ProgressDialog progress =  new ProgressDialog(v.getContext());
                     progress.setTitle("Loading");
-                    progress.setMessage("Wait while recognition...");
+                    progress.setMessage("Wait during recognition...");
                     progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
-                    progress.show();
-                    String response = msnMng.takePhoto();
-                    progress.dismiss();
 
-                    openResponseDIalog(response);
+                    MainActivity.this.runOnUiThread(()->{progress.show();});
 
+                    new Thread(()->{
+                        String response = msnMng.takePhoto();
+                        MainActivity.this.runOnUiThread(()->{
+                            progress.dismiss();
+                            openResponseDIalog(response);});
+                    }).start();
                 }
+
                 else{
                     openResponseDIalog("Error. Please check server connection.");
                 }
@@ -206,11 +211,11 @@ public class MainActivity extends AppCompatActivity  {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
                 msnMng.sendMessage("puissance:"+(seekBar.getProgress()+20));
-
             }
         });
+
+
         ((SeekBar)findViewById(R.id.seekBar)).setProgress( ((SeekBar)findViewById(R.id.seekBar)).getProgress());
     }
 
